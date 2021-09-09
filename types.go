@@ -24,3 +24,7 @@ type ScheduledCollector struct {
 	// A datasource which fetches new data.
 	datasource DataSource
 }
+
+const (
+	ORIGIN_QUEUE string = "origin_queue"
+)

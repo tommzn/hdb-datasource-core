@@ -1,0 +1,11 @@
+
+log:
+  type: local
+  loglevel: debug
+
+weather:
+  owm:
+    url: https://api.openweathermap.org/data/2.5
+    latitude: 48.3596240
+    longitude: 11.3860876
+    units: metric

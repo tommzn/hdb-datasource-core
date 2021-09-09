@@ -45,7 +45,7 @@ func (collector *ScheduledCollector) Run() error {
 	}
 	collector.logger.Infof("Event send, type: %T, queue: %s, id: %s", event, collector.queue, *messageId)
 
-	archiveMessageId, err := collector.publisher.Send(eventData, collector.archiveQueue)
+	archiveMessageId, err := collector.publisher.SendAttributedMessage(eventData, collector.archiveQueue, map[string]string{ORIGIN_QUEUE: collector.queue})
 	if err == nil {
 		collector.logger.Info("Event send to archive queue, id: ", *archiveMessageId)
 	} else {
@@ -55,6 +55,6 @@ func (collector *ScheduledCollector) Run() error {
 }
 
 // serializeEvent uses protobuf to marshal given event
-func serializeEvent(event interface{}) ([]byte, error) {
-	return proto.Marshal(event.(proto.Message))
+func serializeEvent(event proto.Message) ([]byte, error) {
+	return proto.Marshal(event)
 }
