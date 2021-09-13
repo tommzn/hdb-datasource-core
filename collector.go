@@ -1,6 +1,8 @@
 package core
 
 import (
+	"encoding/base64"
+
 	"github.com/golang/protobuf/proto"
 	sqs "github.com/tommzn/aws-sqs"
 	config "github.com/tommzn/go-config"
@@ -55,6 +57,11 @@ func (collector *ScheduledCollector) Run() error {
 }
 
 // serializeEvent uses protobuf to marshal given event
-func serializeEvent(event proto.Message) ([]byte, error) {
-	return proto.Marshal(event)
+func serializeEvent(event proto.Message) (string, error) {
+
+	protoContent, err := proto.Marshal(event)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(protoContent), nil
 }
