@@ -1,6 +1,11 @@
 package core
 
-import "github.com/golang/protobuf/proto"
+import (
+	"context"
+
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/golang/protobuf/proto"
+)
 
 // DataSource retrieves data from a specific source.
 type DataSource interface {
@@ -15,4 +20,11 @@ type Collector interface {
 
 	// Run executes collectors data processing logic.
 	Run() error
+}
+
+// SqsEventProcessor is used to handle event forwarded from AWS SQS to a lambda function.
+type SqsEventProcessor interface {
+
+	// Handle processes given events.
+	Handle(ctx context.Context, sqsEvent events.SQSEvent) error
 }
