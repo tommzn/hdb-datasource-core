@@ -25,6 +25,6 @@ type Collector interface {
 // SqsEventProcessor is used to handle event forwarded from AWS SQS to a lambda function.
 type SqsEventProcessor interface {
 
-	// Handle processes given events.
+	// Handle processes given SQS events.
 	Handle(ctx context.Context, sqsEvent events.SQSEvent) error
 }
