@@ -3,6 +3,8 @@ package core
 import (
 	"context"
 
+	awsevents "github.com/aws/aws-lambda-go/events"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/golang/protobuf/proto"
 )
@@ -27,4 +29,26 @@ type SqsEventProcessor interface {
 
 	// Handle processes given SQS events.
 	Handle(ctx context.Context, sqsEvent events.SQSEvent) error
+}
+
+// S3EventHandler is used to process an event published for S3 actions.
+type S3EventHandler interface {
+
+	// Handle processes passed S3 event.
+	Handle(ctx context.Context, event awsevents.S3Event) error
+}
+
+// S3EventProcessor processes an event for a specific S3 object.
+type S3EventProcessor interface {
+
+	// Process is called to process given event for a S3 object.
+	// It's always called, independent of return value from DownloadS3Object.
+	ProcessEvent(event awsevents.S3Event) error
+
+	// ProcessContent is called to process given content of a S3 object.
+	// It's only called if DownloadS3Object returns true.
+	ProcessContent(eventContent string) error
+
+	// DownloadS3Object tells the S3 event handler if it should fownload content for a S3 object to process it.
+	DownloadS3Object() bool
 }

@@ -5,6 +5,11 @@ import (
 	log "github.com/tommzn/go-log"
 )
 
+const (
+	// ORIGIN_QUEUE is used to add name of a source queue to message attributes of archive events.
+	ORIGIN_QUEUE string = "origin_queue"
+)
+
 // A ScheduledCollector calls fetch method of a datasource one time and publishes returned event to a given AWS SQS queue.
 // It contains a logger to provide insights to all processing steps and it requires a datasource and a puslisher for AWS SQS.
 type ScheduledCollector struct {
@@ -25,6 +30,21 @@ type ScheduledCollector struct {
 	datasource DataSource
 }
 
-const (
-	ORIGIN_QUEUE string = "origin_queue"
-)
+// EventHandlerS3 is used to process an S3 event send from Cloud Watch to a Lambda function on AWS.
+type EventHandlerS3 struct {
+
+	// Logger logs meesages and errors to a given output or log collector.
+	logger log.Logger
+
+	// Publisher sends events obtained from current datasource to defined AWS SQS queue.
+	publisher sqs.Publisher
+
+	// Queue defines the AWS SQS queue event from current datasource should be send to.
+	queue string
+
+	// ArchiveQueue is a queue all events are send additionally to.
+	archiveQueue string
+
+	// processor will be called to process a received event.
+	processor S3EventProcessor
+}
