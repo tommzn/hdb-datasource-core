@@ -43,11 +43,11 @@ type S3EventProcessor interface {
 
 	// Process is called to process given event for a S3 object.
 	// It's always called, independent of return value from DownloadS3Object.
-	ProcessEvent(event awsevents.S3Event) error
+	ProcessEvent(event awsevents.S3Event) (proto.Message, error)
 
 	// ProcessContent is called to process given content of a S3 object.
 	// It's only called if DownloadS3Object returns true.
-	ProcessContent(eventContent string) error
+	ProcessContent(eventContent string) (proto.Message, error)
 
 	// DownloadS3Object tells the S3 event handler if it should fownload content for a S3 object to process it.
 	DownloadS3Object() bool
