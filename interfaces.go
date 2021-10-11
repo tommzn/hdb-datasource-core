@@ -47,8 +47,15 @@ type S3EventProcessor interface {
 
 	// ProcessContent is called to process given content of a S3 object.
 	// It's only called if DownloadS3Object returns true.
-	ProcessContent(eventContent string) (proto.Message, error)
+	ProcessContent(entity awsevents.S3Entity, content []byte) (proto.Message, error)
 
 	// DownloadS3Object tells the S3 event handler if it should fownload content for a S3 object to process it.
 	DownloadS3Object() bool
+}
+
+// s3Downloader returns content of given object in a S3 bucket.
+type s3Downloader interface {
+
+	// getObjectContent will download and return content for passed object in an S3 bucket.
+	getObjectContent(bucket, key string) ([]byte, error)
 }

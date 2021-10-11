@@ -18,7 +18,7 @@ func TestCollectorTestSuite(t *testing.T) {
 }
 
 func (suite *CollectorTestSuite) SetupTest() {
-	suite.conf = loadConfigForTest()
+	suite.conf = loadConfigForTest(nil)
 }
 
 func (suite *CollectorTestSuite) TestCreateCollector() {

@@ -1,18 +1,16 @@
 package core
 
 import (
-	"os"
-
 	config "github.com/tommzn/go-config"
 	log "github.com/tommzn/go-log"
 )
 
 // loadConfigForTest loads test config.
-func loadConfigForTest() config.Config {
+func loadConfigForTest(fileName *string) config.Config {
 
-	configFile, ok := os.LookupEnv("CONFIG_FILE")
-	if !ok {
-		configFile = "testconfig.yml"
+	configFile := "testconfig.yml"
+	if fileName != nil {
+		configFile = *fileName
 	}
 	configLoader := config.NewFileConfigSource(&configFile)
 	config, _ := configLoader.Load()

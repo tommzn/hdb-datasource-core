@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	sqs "github.com/tommzn/aws-sqs"
 	log "github.com/tommzn/go-log"
 )
@@ -47,4 +48,14 @@ type EventHandlerS3 struct {
 
 	// processor will be called to process a received event.
 	processor S3EventProcessor
+
+	// downloader is used to get objet content for an object in a S3 bucket.
+	downloader s3Downloader
+}
+
+// s3Client is used to access objects in an AWS S3 bucket.
+type s3Client struct {
+
+	// awsS3Downloader is used to download object content from AWS S3.
+	awsS3Downloader *s3manager.Downloader
 }
