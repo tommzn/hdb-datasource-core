@@ -35,3 +35,10 @@ func (suite *AwsTestSuite) TestAwsConfig() {
 	suite.Equal(expectedRegion, *awsConfig3.Region)
 	os.Unsetenv("AWS_REGION")
 }
+
+func (suite *AwsTestSuite) TestS3Downloader() {
+
+	conf := loadConfigForTest(config.AsStringPtr("fixtures/aws.testconfig.yml"))
+	downloader := newS3Downloader(conf)
+	suite.NotNil(downloader)
+}

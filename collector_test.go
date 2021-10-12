@@ -33,7 +33,7 @@ func (suite *CollectorTestSuite) TestFetchData() {
 
 	err := collector.Run()
 	suite.Nil(err)
-	suite.Equal(2, collector.(*ScheduledCollector).publisher.(*publisherMock).messageCount)
+	suite.Equal(2, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
 
 func (suite *CollectorTestSuite) TestFetchDataWithError() {
@@ -42,25 +42,25 @@ func (suite *CollectorTestSuite) TestFetchDataWithError() {
 
 	err := collector.Run()
 	suite.NotNil(err)
-	suite.Equal(0, collector.(*ScheduledCollector).publisher.(*publisherMock).messageCount)
+	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
 
 func (suite *CollectorTestSuite) TestWithPublisherError() {
 
 	collector := collectorForTest(suite.conf)
-	collector.(*ScheduledCollector).queue = "error"
+	collector.(*ScheduledCollector).messagePublisher.(*publisherMock).shouldFail = true
 
 	err := collector.Run()
 	suite.NotNil(err)
-	suite.Equal(0, collector.(*ScheduledCollector).publisher.(*publisherMock).messageCount)
+	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
 
 func (suite *CollectorTestSuite) TestWithArchivePublisherError() {
 
 	collector := collectorForTest(suite.conf)
-	collector.(*ScheduledCollector).archiveQueue = "error"
+	collector.(*ScheduledCollector).messagePublisher.(*publisherMock).shouldFail = true
 
 	err := collector.Run()
-	suite.Nil(err)
-	suite.Equal(1, collector.(*ScheduledCollector).publisher.(*publisherMock).messageCount)
+	suite.NotNil(err)
+	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }

@@ -3,6 +3,9 @@ log:
   type: local
   loglevel: debug
 
+aws:
+  region: eu-central-1
+
 weather:
   owm:
     url: https://api.openweathermap.org/data/2.5

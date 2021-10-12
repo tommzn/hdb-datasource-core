@@ -3,8 +3,8 @@ package core
 import (
 	"errors"
 
+	awsevents "github.com/aws/aws-lambda-go/events"
 	"github.com/golang/protobuf/proto"
-	sqs "github.com/tommzn/aws-sqs"
 	utils "github.com/tommzn/go-utils"
 	events "github.com/tommzn/hdb-events-go"
 )
@@ -35,33 +35,39 @@ func newDataSourceMockWithError() DataSource {
 
 // publisherMock can be used to mock AWS SQS publisher for testing.
 type publisherMock struct {
+	shouldFail   bool
 	messageCount int
-}
-
-// Mocked method to send messages to AWS SQS.
-func (mock *publisherMock) Send(message interface{}, queue string) (*string, error) {
-	return mock.send(queue)
-}
-
-// Mocked method to send attributed messages to AWS SQS.
-func (mock *publisherMock) SendAttributedMessage(message interface{}, queue string, attributes map[string]string) (*string, error) {
-	return mock.send(queue)
 }
 
 // Counts calls to send message methods and returns a new message id. If you pass "error" as queue name it will returns with
 // an error and doesn't count this call.
-func (mock *publisherMock) send(queue string) (*string, error) {
+func (mock *publisherMock) send(message proto.Message) error {
 
-	if queue == "error" {
-		return nil, errors.New("Unable to send message.")
+	if mock.shouldFail {
+		return errors.New("Unable to send message.")
 	}
 
-	mock.messageCount++
-	messageId := utils.NewId()
-	return &messageId, nil
+	mock.messageCount += 2
+	return nil
 }
 
 // newPublisherMock returns a new mock for a AWS SQS publisher.
-func newPublisherMock() sqs.Publisher {
-	return &publisherMock{messageCount: 0}
+func newPublisherMock() publisher {
+	return &publisherMock{shouldFail: false, messageCount: 0}
+}
+
+// s3EventProcessorMock can be used for testing, processing will aalways succeed.
+type s3EventProcessorMock struct {
+}
+
+func (mock *s3EventProcessorMock) ProcessEvent(entity awsevents.S3Entity, content []byte) (proto.Message, error) {
+	return nil, nil
+}
+
+func (mock *s3EventProcessorMock) DownloadS3Object() bool {
+	return true
+}
+
+func newS3EventProcessorMock() S3EventProcessor {
+	return &s3EventProcessorMock{}
 }
