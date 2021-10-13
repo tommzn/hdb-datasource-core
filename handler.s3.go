@@ -81,5 +81,4 @@ func (handler *EventHandlerS3) getObjectContent(entity awsevents.S3Entity) ([]by
 	buf := &aws.WriteAtBuffer{}
 	_, err := handler.downloader.Download(buf, getObjectInput)
 	return buf.Bytes(), err
-
 }
