@@ -22,6 +22,6 @@ func asError(errorList []error) error {
 // archiveQueueFromConfig try to get archive queue name from passed config
 // and will return with a default value if nothing can be obtained.
 func archiveQueueFromConfig(conf config.Config) string {
-	archiveQueue := conf.Get("hdb.archive", config.AsStringPtr("de.tsl.hdb.archive"))
+	archiveQueue := conf.Get("hdb.archive", config.AsStringPtr("de-tsl-hdb-archive"))
 	return *archiveQueue
 }

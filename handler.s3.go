@@ -15,12 +15,16 @@ import (
 // NewS3EventHandler returns a new handler to process S3 events send from Cloud Watch.
 func NewS3EventHandler(queue string, processor S3EventProcessor, conf config.Config, logger log.Logger) S3EventHandler {
 
-	return &EventHandlerS3{
+	downloadContent := conf.GetAsBool("aws.s3.download", config.AsBoolPtr(false))
+	handler := &EventHandlerS3{
 		logger:           logger,
 		messagePublisher: newSqsPublisher(conf, logger, queue, archiveQueueFromConfig(conf)),
 		processor:        processor,
-		downloader:       newS3Downloader(conf),
 	}
+	if *downloadContent {
+		handler.downloader = newS3Downloader(conf)
+	}
+	return handler
 }
 
 // Handle processes passed S3 event.
@@ -45,7 +49,7 @@ func (handler *EventHandlerS3) Handle(ctx context.Context, event awsevents.S3Eve
 // processS3Entity process a single S3 entity.
 func (handler *EventHandlerS3) processS3Entity(entity awsevents.S3Entity) (proto.Message, error) {
 
-	content, err := handler.getObjectContent(entity)
+	content, err := handler.downloadS3ObjectIfNecessary(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +60,7 @@ func (handler *EventHandlerS3) processS3Entity(entity awsevents.S3Entity) (proto
 // true at DownloadS3Object.
 func (handler *EventHandlerS3) downloadS3ObjectIfNecessary(entity awsevents.S3Entity) ([]byte, error) {
 
-	if handler.processor.DownloadS3Object() {
+	if handler.downloader != nil {
 		content, err := handler.getObjectContent(entity)
 		if err != nil {
 			handler.logger.Errorf("Unable to download %s/%s, reason: %s", entity.Bucket.Name, entity.Object.Key, err)

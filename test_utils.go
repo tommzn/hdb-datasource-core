@@ -13,7 +13,7 @@ import (
 // loadConfigForTest loads test config.
 func loadConfigForTest(fileName *string) config.Config {
 
-	configFile := "testconfig.yml"
+	configFile := "fixtures/testconfig.yml"
 	if fileName != nil {
 		configFile = *fileName
 	}
@@ -62,6 +62,27 @@ func s3EntityForTest() events.S3Entity {
 		},
 		Object: events.S3Object{
 			Key: "s3.download.test",
+		},
+	}
+}
+
+func notExistingS3EntityForTest() events.S3Entity {
+	return events.S3Entity{
+		Bucket: events.S3Bucket{
+			Name: os.Getenv("AWS_S3_TEST_BUCKET"),
+		},
+		Object: events.S3Object{
+			Key: "s3.failue.test",
+		},
+	}
+}
+
+func s3EventForTest(entity events.S3Entity) events.S3Event {
+	return events.S3Event{
+		Records: []events.S3EventRecord{
+			events.S3EventRecord{
+				S3: entity,
+			},
 		},
 	}
 }

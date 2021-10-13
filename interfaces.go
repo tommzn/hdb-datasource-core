@@ -42,11 +42,8 @@ type S3EventHandler interface {
 type S3EventProcessor interface {
 
 	// Process is called to process given event for a S3 object.
-	// It's always called, independent of return value from DownloadS3Object.
+	// If download option is enable via config it will pass S3 object content as well.
 	ProcessEvent(entity awsevents.S3Entity, content []byte) (proto.Message, error)
-
-	// DownloadS3Object tells the S3 event handler if it should fownload content for a S3 object to process it.
-	DownloadS3Object() bool
 }
 
 // publisher is used to send messages to one or multiple queues.

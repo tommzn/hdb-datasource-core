@@ -35,8 +35,5 @@ func (collector *ScheduledCollector) Run() error {
 func serializeEvent(event proto.Message) (string, error) {
 
 	protoContent, err := proto.Marshal(event)
-	if err != nil {
-		return "", err
-	}
-	return base64.StdEncoding.EncodeToString(protoContent), nil
+	return base64.StdEncoding.EncodeToString(protoContent), err
 }

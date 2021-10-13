@@ -35,7 +35,7 @@ func (publisher *sqsPublisher) send(message proto.Message) error {
 
 	archiveMessageId, err := publisher.sqsClient.SendAttributedMessage(messageString, publisher.archiveQueue, map[string]string{ORIGIN_QUEUE: publisher.queue})
 	if err != nil {
-		publisher.logger.Error("Unable to semd event to archive queue, reason: ", err)
+		publisher.logger.Errorf("Unable to semd event to archive queue %s, reason: %s", publisher.archiveQueue, err)
 		return err
 	}
 	publisher.logger.Info("Event send to archive queue, id: ", *archiveMessageId)

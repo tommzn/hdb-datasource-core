@@ -5,10 +5,15 @@ log:
 
 aws:
   region: eu-central-1
-
+  sqs:
+    region: eu-central-1
+  s3:
+    download: true
+  
 weather:
   owm:
     url: https://api.openweathermap.org/data/2.5
     latitude: 48.3596240
     longitude: 11.3860876
     units: metric
+  

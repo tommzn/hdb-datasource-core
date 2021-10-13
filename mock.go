@@ -64,10 +64,6 @@ func (mock *s3EventProcessorMock) ProcessEvent(entity awsevents.S3Entity, conten
 	return nil, nil
 }
 
-func (mock *s3EventProcessorMock) DownloadS3Object() bool {
-	return true
-}
-
 func newS3EventProcessorMock() S3EventProcessor {
 	return &s3EventProcessorMock{}
 }
