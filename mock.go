@@ -18,9 +18,8 @@ type dataSourceMock struct {
 func (mock *dataSourceMock) Fetch() (proto.Message, error) {
 	if mock.shouldReturnError {
 		return nil, errors.New("Unable to fetch data.")
-	} else {
-		return &events.Dummy{Id: utils.NewId()}, nil
 	}
+	return &events.Dummy{Id: utils.NewId()}, nil
 }
 
 // newDataSourceMock creates a new mocked datasource which returns always a new Dummy event.
