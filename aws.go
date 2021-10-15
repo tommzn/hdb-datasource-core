@@ -14,9 +14,6 @@ import (
 func newAWSConfig(conf config.Config) *aws.Config {
 
 	awsConfig := aws.NewConfig()
-	if awsRegion, ok := os.LookupEnv("AWS_REGION"); ok {
-		return awsConfig.WithRegion(awsRegion)
-	}
 
 	if conf != nil {
 		configKeys := []string{"aws.region", "aws.s3.region"}
@@ -27,6 +24,11 @@ func newAWSConfig(conf config.Config) *aws.Config {
 		}
 
 	}
+
+	if awsRegion, ok := os.LookupEnv("AWS_REGION"); ok {
+		return awsConfig.WithRegion(awsRegion)
+	}
+
 	return awsConfig
 }
 
