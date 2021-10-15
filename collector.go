@@ -14,6 +14,7 @@ func NewScheduledCollector(queue string, datasource DataSource, conf config.Conf
 	return &ScheduledCollector{
 		logger:           logger,
 		messagePublisher: newSqsPublisher(conf, logger, queue, archiveQueueFromConfig(conf)),
+		datasource:       datasource,
 	}
 }
 
