@@ -29,6 +29,7 @@ func (suite *AwsTestSuite) TestAwsConfig() {
 
 	expectedRegion := "eu-east-17"
 	os.Setenv("AWS_REGION", expectedRegion)
+	conf = loadConfigForTest(config.AsStringPtr("fixtures/empty.testconfig.yml"))
 	awsConfig3 := newAWSConfig(conf)
 	suite.NotNil(awsConfig3)
 	suite.NotNil(awsConfig3.Region)
