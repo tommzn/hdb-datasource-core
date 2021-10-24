@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -11,6 +12,7 @@ import (
 type CollectorTestSuite struct {
 	suite.Suite
 	conf config.Config
+	ctx  context.Context
 }
 
 func TestCollectorTestSuite(t *testing.T) {
@@ -19,6 +21,7 @@ func TestCollectorTestSuite(t *testing.T) {
 
 func (suite *CollectorTestSuite) SetupTest() {
 	suite.conf = loadConfigForTest(nil)
+	suite.ctx = context.Background()
 }
 
 func (suite *CollectorTestSuite) TestCreateCollector() {
@@ -31,7 +34,7 @@ func (suite *CollectorTestSuite) TestFetchData() {
 
 	collector := collectorForTest(suite.conf)
 
-	err := collector.Run()
+	err := collector.Run(suite.ctx)
 	suite.Nil(err)
 	suite.Equal(2, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
@@ -40,7 +43,7 @@ func (suite *CollectorTestSuite) TestFetchDataWithError() {
 
 	collector := collectorWithDataSourceErrorForTest(suite.conf)
 
-	err := collector.Run()
+	err := collector.Run(suite.ctx)
 	suite.NotNil(err)
 	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
@@ -50,7 +53,7 @@ func (suite *CollectorTestSuite) TestWithPublisherError() {
 	collector := collectorForTest(suite.conf)
 	collector.(*ScheduledCollector).messagePublisher.(*publisherMock).shouldFail = true
 
-	err := collector.Run()
+	err := collector.Run(suite.ctx)
 	suite.NotNil(err)
 	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
@@ -60,7 +63,7 @@ func (suite *CollectorTestSuite) TestWithArchivePublisherError() {
 	collector := collectorForTest(suite.conf)
 	collector.(*ScheduledCollector).messagePublisher.(*publisherMock).shouldFail = true
 
-	err := collector.Run()
+	err := collector.Run(suite.ctx)
 	suite.NotNil(err)
 	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }

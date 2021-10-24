@@ -21,7 +21,7 @@ type DataSource interface {
 type Collector interface {
 
 	// Run executes collectors data processing logic.
-	Run() error
+	Run(context.Context) error
 }
 
 // SqsEventProcessor is used to handle event forwarded from AWS SQS to a lambda function.

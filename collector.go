@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/base64"
 
 	"github.com/golang/protobuf/proto"
@@ -20,7 +21,7 @@ func NewScheduledCollector(queue string, datasource DataSource, conf config.Conf
 
 // Run calls fetch of current datasource one time and published the returned event to a given AWS SQS queue.
 // In can of any errors, they'll be logged and returned.
-func (collector *ScheduledCollector) Run() error {
+func (collector *ScheduledCollector) Run(ctx context.Context) error {
 
 	defer collector.logger.Flush()
 
