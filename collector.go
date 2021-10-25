@@ -3,6 +3,10 @@ package core
 import (
 	"context"
 	"encoding/base64"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/golang/protobuf/proto"
 	config "github.com/tommzn/go-config"
@@ -38,4 +42,45 @@ func serializeEvent(event proto.Message) (string, error) {
 
 	protoContent, err := proto.Marshal(event)
 	return base64.StdEncoding.EncodeToString(protoContent), err
+}
+
+// NewContinuousCollector returns a new collector for continuous processing with given datasource.
+func NewContinuousCollector(datasource Collector, logger log.Logger) Collector {
+
+	collector := &ContinuousCollector{
+		logger:     logger,
+		datasource: datasource,
+	}
+	collector.signalObserver = collector.observeOsSignals
+	return collector
+}
+
+// Run executes datasource member in a separate Go routine and observes os signals for
+// a graceful shotdown.
+func (collector *ContinuousCollector) Run(ctx context.Context) error {
+
+	cancelCtx, cancelFunc := context.WithCancel(ctx)
+	waitGroup := &sync.WaitGroup{}
+
+	errChan := make(chan error, 1)
+	waitGroup.Add(1)
+	go func() {
+		defer waitGroup.Done()
+		errChan <- collector.datasource.Run(cancelCtx)
+	}()
+
+	collector.signalObserver()
+	cancelFunc()
+	waitGroup.Wait()
+	if len(errChan) > 0 {
+		return <-errChan
+	}
+	return nil
+}
+
+// observeOsSignals blocks until SIGINT or SIGTERM has been received.
+func (collector *ContinuousCollector) observeOsSignals() {
+	osSignal := make(chan os.Signal, 1)
+	signal.Notify(osSignal, syscall.SIGINT, syscall.SIGTERM)
+	<-osSignal
 }

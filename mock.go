@@ -1,7 +1,10 @@
 package core
 
 import (
+	"context"
 	"errors"
+	"sync"
+	"time"
 
 	awsevents "github.com/aws/aws-lambda-go/events"
 	"github.com/golang/protobuf/proto"
@@ -59,10 +62,48 @@ func newPublisherMock() publisher {
 type s3EventProcessorMock struct {
 }
 
+// ProcessEvent will return always no message and no error.
 func (mock *s3EventProcessorMock) ProcessEvent(entity awsevents.S3Entity, content []byte) (proto.Message, error) {
 	return nil, nil
 }
 
+// newS3EventProcessorMock returns a newS3 event processor mock for testing.
 func newS3EventProcessorMock() S3EventProcessor {
 	return &s3EventProcessorMock{}
+}
+
+// collectorMock is used to test continuous collector.
+type collectorMock struct {
+	counter     int
+	hasFinished bool
+}
+
+// Run will increade a counter every 100 milliseconds and stops execution
+// if context has been canceled.
+func (mock *collectorMock) Run(ctx context.Context) error {
+
+	stopChan := make(chan bool, 1)
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		mock.counter++
+		time.Sleep(100 * time.Millisecond)
+		if len(stopChan) > 0 {
+			return
+		}
+	}()
+	<-ctx.Done()
+	stopChan <- true
+	wg.Wait()
+	mock.hasFinished = true
+	return nil
+}
+
+// newCollectorMock returns a new collector mock for testing.
+func newCollectorMock() Collector {
+	return &collectorMock{
+		counter:     0,
+		hasFinished: false,
+	}
 }

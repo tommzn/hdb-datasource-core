@@ -25,6 +25,22 @@ type ScheduledCollector struct {
 	datasource DataSource
 }
 
+// ContinuousCollector is used as a deamon to permanently collect data from a source.
+// It mainly cares about observing os singles to handle graceful shutdowns. The actual
+// logic to process data in encapsulated in datasource member.
+type ContinuousCollector struct {
+
+	// Logger logs meesages and errors to a given output or log collector.
+	logger log.Logger
+
+	// Datasource is a collector as well which contains the actual logic to process data from
+	// different sources.
+	datasource Collector
+
+	// signalObserver waits for OS signals like SIGINT and SIGTERM.
+	signalObserver osSignalObserver
+}
+
 // EventHandlerS3 is used to process an S3 event send from Cloud Watch to a Lambda function on AWS.
 type EventHandlerS3 struct {
 
@@ -41,6 +57,7 @@ type EventHandlerS3 struct {
 	downloader *s3manager.Downloader
 }
 
+// sqsPublisher is used to publish messages on AWS SQS.
 type sqsPublisher struct {
 
 	// sqsClient sends events obtained from current datasource to defined AWS SQS queue.
@@ -55,3 +72,6 @@ type sqsPublisher struct {
 	// ArchiveQueue is a queue all events are send additionally to.
 	archiveQueue string
 }
+
+// osSignalObserver will observer OS signals. Execution is blocked until a signal has been received.
+type osSignalObserver = func()

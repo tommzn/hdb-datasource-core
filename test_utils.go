@@ -3,6 +3,7 @@ package core
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 
@@ -85,6 +86,12 @@ func s3EventForTest(entity events.S3Entity) events.S3Event {
 			},
 		},
 	}
+}
+
+// osSignalObserverMock can be used to simulate observing for OS signals.
+// It will return after 1 second.
+func osSignalObserverMock() {
+	time.Sleep(1 * time.Second)
 }
 
 // skipCI returns true if env variable CI is set

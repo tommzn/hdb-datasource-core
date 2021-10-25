@@ -67,3 +67,16 @@ func (suite *CollectorTestSuite) TestWithArchivePublisherError() {
 	suite.NotNil(err)
 	suite.Equal(0, collector.(*ScheduledCollector).messagePublisher.(*publisherMock).messageCount)
 }
+
+func (suite *CollectorTestSuite) TestContinuousCollector() {
+
+	mock := newCollectorMock()
+	collector := NewContinuousCollector(mock, loggerForTest())
+	collector.(*ContinuousCollector).signalObserver = osSignalObserverMock
+
+	ctx := context.Background()
+	collector.Run(ctx)
+
+	suite.True(mock.(*collectorMock).hasFinished)
+	suite.True(mock.(*collectorMock).counter > 0)
+}
