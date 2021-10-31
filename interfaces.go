@@ -46,9 +46,9 @@ type S3EventProcessor interface {
 	ProcessEvent(entity awsevents.S3Entity, content []byte) (proto.Message, error)
 }
 
-// publisher is used to send messages to one or multiple queues.
-type publisher interface {
+// Publisher is used to send messages to one or multiple queues.
+type Publisher interface {
 
-	// send will publish passed message to given queues.
-	send(message proto.Message) error
+	// Send will publish passed message to given queues.
+	Send(message proto.Message) error
 }

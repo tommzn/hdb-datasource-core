@@ -43,7 +43,7 @@ type publisherMock struct {
 
 // Counts calls to send message methods and returns a new message id. If you pass "error" as queue name it will returns with
 // an error and doesn't count this call.
-func (mock *publisherMock) send(message proto.Message) error {
+func (mock *publisherMock) Send(message proto.Message) error {
 
 	if mock.shouldFail {
 		return errors.New("Unable to send message.")
@@ -54,7 +54,7 @@ func (mock *publisherMock) send(message proto.Message) error {
 }
 
 // newPublisherMock returns a new mock for a AWS SQS publisher.
-func newPublisherMock() publisher {
+func newPublisherMock() Publisher {
 	return &publisherMock{shouldFail: false, messageCount: 0}
 }
 

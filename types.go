@@ -19,7 +19,7 @@ type ScheduledCollector struct {
 	logger log.Logger
 
 	// Publisher sends events obtained from current datasource to defined AWS SQS queue.
-	messagePublisher publisher
+	messagePublisher Publisher
 
 	// A datasource which fetches new data.
 	datasource DataSource
@@ -48,7 +48,7 @@ type EventHandlerS3 struct {
 	logger log.Logger
 
 	// Publisher sends events obtained from current datasource to defined AWS SQS queue.
-	messagePublisher publisher
+	messagePublisher Publisher
 
 	// processor will be called to process a received event.
 	processor S3EventProcessor
@@ -57,8 +57,8 @@ type EventHandlerS3 struct {
 	downloader *s3manager.Downloader
 }
 
-// sqsPublisher is used to publish messages on AWS SQS.
-type sqsPublisher struct {
+// SqsPublisher is used to publish messages on AWS SQS.
+type SqsPublisher struct {
 
 	// sqsClient sends events obtained from current datasource to defined AWS SQS queue.
 	sqsClient sqs.Publisher

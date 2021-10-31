@@ -8,8 +8,15 @@ import (
 )
 
 // newSqsPublisher creates a new SQS message publisher.
-func newSqsPublisher(conf config.Config, logger log.Logger, queue, archiveQueue string) publisher {
-	return &sqsPublisher{
+func NewPublisher(conf config.Config, logger log.Logger) Publisher {
+	queue := conf.Get("hdb.queue", config.AsStringPtr("de.tsl.hdb.unknown"))
+	archiveQueue := archiveQueueFromConfig(conf)
+	return newSqsPublisher(conf, logger, *queue, archiveQueue)
+}
+
+// newSqsPublisher creates a new SQS message publisher with given queue and archive queue.
+func newSqsPublisher(conf config.Config, logger log.Logger, queue, archiveQueue string) Publisher {
+	return &SqsPublisher{
 		logger:       logger,
 		sqsClient:    sqs.NewPublisher(conf),
 		queue:        queue,
@@ -18,7 +25,7 @@ func newSqsPublisher(conf config.Config, logger log.Logger, queue, archiveQueue 
 }
 
 // send will publish passed message to given queues.
-func (publisher *sqsPublisher) send(message proto.Message) error {
+func (publisher *SqsPublisher) Send(message proto.Message) error {
 
 	messageString, err := serializeEvent(message)
 	if err != nil {

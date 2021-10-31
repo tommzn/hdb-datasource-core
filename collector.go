@@ -34,7 +34,7 @@ func (collector *ScheduledCollector) Run(ctx context.Context) error {
 		collector.logger.Error("Unable to fetch new data, reason: ", err)
 		return err
 	}
-	return collector.messagePublisher.send(event)
+	return collector.messagePublisher.Send(event)
 }
 
 // serializeEvent uses protobuf to marshal given event

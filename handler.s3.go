@@ -39,7 +39,7 @@ func (handler *EventHandlerS3) Handle(ctx context.Context, event awsevents.S3Eve
 			errorList = append(errorList, err)
 		}
 
-		if err := handler.messagePublisher.send(message); err != nil {
+		if err := handler.messagePublisher.Send(message); err != nil {
 			errorList = append(errorList, err)
 		}
 	}

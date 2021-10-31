@@ -28,7 +28,7 @@ func (suite *PublisherTestSuite) TestPublishMessage() {
 	suite.NotNil(publisher)
 
 	event := &events.Dummy{Id: "1"}
-	suite.Nil(publisher.send(event))
+	suite.Nil(publisher.Send(event))
 }
 
 func (suite *PublisherTestSuite) TestPublishWithError() {
@@ -39,9 +39,9 @@ func (suite *PublisherTestSuite) TestPublishWithError() {
 
 	publisher1 := newSqsPublisher(suite.conf, loggerForTest(), "xxx", "tzn-unittest")
 	suite.NotNil(publisher1)
-	suite.NotNil(publisher1.send(event))
+	suite.NotNil(publisher1.Send(event))
 
 	publisher2 := newSqsPublisher(suite.conf, loggerForTest(), "tzn-unittest", "xxx")
 	suite.NotNil(publisher2)
-	suite.NotNil(publisher2.send(event))
+	suite.NotNil(publisher2.Send(event))
 }
