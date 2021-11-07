@@ -37,12 +37,13 @@ func (handler *EventHandlerS3) Handle(ctx context.Context, event awsevents.S3Eve
 
 		message, err := handler.processS3Entity(record.S3)
 		if err != nil {
-			handler.logger.Errorf("S3 event processing failed %s/%s, reason: ", record.S3.Bucket.Name, record.S3.Object.Key, err)
+			handler.logger.Errorf("S3 event processing failed %s/%s, reason: %s", record.S3.Bucket.Name, record.S3.Object.Key, err)
 			errorList = append(errorList, err)
+			continue
 		}
 
 		if err := handler.messagePublisher.Send(message); err != nil {
-			handler.logger.Errorf("SUnable to send event for S3 entity %s/%s, reason: ", record.S3.Bucket.Name, record.S3.Object.Key, err)
+			handler.logger.Errorf("SUnable to send event for S3 entity %s/%s, reason: %d", record.S3.Bucket.Name, record.S3.Object.Key, err)
 			errorList = append(errorList, err)
 		}
 	}
