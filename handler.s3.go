@@ -30,6 +30,8 @@ func NewS3EventHandler(queue string, processor S3EventProcessor, conf config.Con
 // Handle processes passed S3 event.
 func (handler *EventHandlerS3) Handle(ctx context.Context, event awsevents.S3Event) error {
 
+	defer handler.logger.Flush()
+
 	var errorList []error
 	for _, record := range event.Records {
 
@@ -40,6 +42,7 @@ func (handler *EventHandlerS3) Handle(ctx context.Context, event awsevents.S3Eve
 		}
 
 		if err := handler.messagePublisher.Send(message); err != nil {
+			handler.logger.Errorf("SUnable to send event for S3 entity %s/%s, reason: ", record.S3.Bucket.Name, record.S3.Object.Key, err)
 			errorList = append(errorList, err)
 		}
 	}
