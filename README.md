@@ -6,3 +6,7 @@
 
 # HomeDashboard Datasource - Core
 Contains interfaces and core components for HomeDashboard datasources.
+
+# Links
+- [HomeDashboard Documentation](https://github.com/tommzn/hdb-docs/wiki)
+
