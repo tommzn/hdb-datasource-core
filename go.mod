@@ -13,7 +13,7 @@ require (
 	github.com/tommzn/go-config v1.0.5
 	github.com/tommzn/go-log v1.0.2
 	github.com/tommzn/go-utils v1.0.1
-	github.com/tommzn/hdb-events-go v1.0.6
+	github.com/tommzn/hdb-events-go v1.0.8
 	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1

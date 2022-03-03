@@ -27,6 +27,9 @@ func newSqsPublisher(conf config.Config, logger log.Logger, queue, archiveQueue 
 // send will publish passed message to given queues.
 func (publisher *SqsPublisher) Send(message proto.Message) error {
 
+	defer publisher.logger.Flush()
+	logEvent(message, publisher.logger)
+
 	messageString, err := serializeEvent(message)
 	if err != nil {
 		publisher.logger.Errorf("Failed to encode event, type: %T, reason: %s", message, err)
