@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/golang/protobuf/proto"
 	config "github.com/tommzn/go-config"
 	log "github.com/tommzn/go-log"
+	"google.golang.org/protobuf/proto"
 )
 
 // asError returns a single error with all passed or nil if passed slice is empty.

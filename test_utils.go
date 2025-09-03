@@ -7,8 +7,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 
-	config "github.com/tommzn/go-config"
-	log "github.com/tommzn/go-log"
+	"github.com/tommzn/go-config"
+	"github.com/tommzn/go-log"
 )
 
 // loadConfigForTest loads test config.

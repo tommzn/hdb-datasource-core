@@ -7,9 +7,9 @@ import (
 	"time"
 
 	awsevents "github.com/aws/aws-lambda-go/events"
-	"github.com/golang/protobuf/proto"
-	utils "github.com/tommzn/go-utils"
+	"github.com/tommzn/go-utils"
 	events "github.com/tommzn/hdb-events-go"
+	"google.golang.org/protobuf/proto"
 )
 
 // Mocked datasource which retruns a dummy event.
