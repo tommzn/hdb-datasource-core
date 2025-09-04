@@ -1,9 +1,9 @@
 package core
 
 import (
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	sqs "github.com/tommzn/aws-sqs"
-	log "github.com/tommzn/go-log"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"github.com/tommzn/go-log"
 )
 
 const (
@@ -12,10 +12,10 @@ const (
 )
 
 // A ScheduledCollector calls fetch method of a datasource one time and publishes returned event to a given AWS SQS queue.
-// It contains a logger to provide insights to all processing steps and it requires a datasource and a puslisher for AWS SQS.
+// It contains a logger to provide insights to all processing steps and it requires a datasource and a publisher for AWS SQS.
 type ScheduledCollector struct {
 
-	// Logger logs meesages and errors to a given output or log collector.
+	// Logger logs messages and errors to a given output or log collector.
 	logger log.Logger
 
 	// Publisher sends events obtained from current datasource to defined AWS SQS queue.
@@ -25,12 +25,12 @@ type ScheduledCollector struct {
 	datasource DataSource
 }
 
-// ContinuousCollector is used as a deamon to permanently collect data from a source.
-// It mainly cares about observing os singles to handle graceful shutdowns. The actual
-// logic to process data in encapsulated in datasource member.
+// ContinuousCollector is used as a daemon to permanently collect data from a source.
+// It mainly cares about observing OS signals to handle graceful shutdowns. The actual
+// logic to process data is encapsulated in datasource member.
 type ContinuousCollector struct {
 
-	// Logger logs meesages and errors to a given output or log collector.
+	// Logger logs messages and errors to a given output or log collector.
 	logger log.Logger
 
 	// Datasource is a collector as well which contains the actual logic to process data from
@@ -41,37 +41,37 @@ type ContinuousCollector struct {
 	signalObserver osSignalObserver
 }
 
-// EventHandlerS3 is used to process an S3 event send from Cloud Watch to a Lambda function on AWS.
+// EventHandlerS3 is used to process an S3 event sent from CloudWatch to a Lambda function on AWS.
 type EventHandlerS3 struct {
 
-	// Logger logs meesages and errors to a given output or log collector.
+	// Logger logs messages and errors to a given output or log collector.
 	logger log.Logger
 
 	// Publisher sends events obtained from current datasource to defined AWS SQS queue.
 	messagePublisher Publisher
 
-	// processor will be called to process a received event.
+	// Processor will be called to process a received event.
 	processor S3EventProcessor
 
-	// downloader is used to get objet content for an object in a S3 bucket.
-	downloader *s3manager.Downloader
+	// Downloader is used to get object content for an object in an S3 bucket.
+	downloader *manager.Downloader
 }
 
 // SqsPublisher is used to publish messages on AWS SQS.
 type SqsPublisher struct {
 
 	// sqsClient sends events obtained from current datasource to defined AWS SQS queue.
-	sqsClient sqs.Publisher
+	sqsClient *sqs.Client
 
-	// Logger logs meesages and errors to a given output or log collector.
+	// Logger logs messages and errors to a given output or log collector.
 	logger log.Logger
 
-	// Queue defines the AWS SQS queue event from current datasource should be send to.
-	queue string
+	// Queue defines the AWS SQS queue event from current datasource should be sent to.
+	queueURL string
 
-	// ArchiveQueue is a queue all events are send additionally to.
+	// ArchiveQueue is a queue all events are sent additionally to.
 	archiveQueue string
 }
 
-// osSignalObserver will observer OS signals. Execution is blocked until a signal has been received.
+// osSignalObserver will observe OS signals. Execution is blocked until a signal has been received.
 type osSignalObserver = func()

@@ -8,9 +8,9 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/golang/protobuf/proto"
 	config "github.com/tommzn/go-config"
 	log "github.com/tommzn/go-log"
+	"google.golang.org/protobuf/proto"
 )
 
 // NewScheduledCollector returns a new scheduled collector for given config.
