@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/tommzn/go-log"
 )
@@ -54,7 +54,7 @@ type EventHandlerS3 struct {
 	processor S3EventProcessor
 
 	// Downloader is used to get object content for an object in an S3 bucket.
-	downloader *s3.Downloader
+	downloader *manager.Downloader
 }
 
 // SqsPublisher is used to publish messages on AWS SQS.

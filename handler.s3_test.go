@@ -2,9 +2,10 @@ package core
 
 import (
 	"context"
+	"testing"
+
 	"github.com/stretchr/testify/suite"
 	config "github.com/tommzn/go-config"
-	"testing"
 )
 
 type S3HandlerTestSuite struct {
@@ -31,12 +32,12 @@ func (suite *S3HandlerTestSuite) TestDownloadObjectContent() {
 
 	handler := newS3EventHandlerForTest(suite.conf)
 	entity := s3EntityForTest()
-	content1, err1 := handler.(*EventHandlerS3).getObjectContent(entity)
+	content1, err1 := handler.(*EventHandlerS3).getObjectContent(context.TODO(), entity)
 	suite.Nil(err1)
 	suite.True(len(content1) > 0)
 
 	entity.Object.Key = "xxx"
-	content2, err2 := handler.(*EventHandlerS3).getObjectContent(entity)
+	content2, err2 := handler.(*EventHandlerS3).getObjectContent(context.TODO(), entity)
 	suite.NotNil(err2)
 	suite.Len(content2, 0)
 

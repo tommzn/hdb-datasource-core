@@ -5,19 +5,13 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
+	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"github.com/tommzn/go-config"
 	"github.com/tommzn/go-log"
 	"google.golang.org/protobuf/proto"
 )
-
-// SqsPublisher sends messages to an SQS queue and an archive queue.
-type SqsPublisher struct {
-	logger       log.Logger
-	sqsClient    *sqs.Client
-	queueURL     string
-	archiveQueue string
-}
 
 // NewPublisher creates a new SQS message publisher.
 func NewPublisher(conf config.Config, logger log.Logger) Publisher {
@@ -29,7 +23,7 @@ func NewPublisher(conf config.Config, logger log.Logger) Publisher {
 // newSqsPublisher creates a new SQS message publisher with given queue and archive queue.
 func newSqsPublisher(conf config.Config, logger log.Logger, queue, archiveQueue string) Publisher {
 
-	awsCfg, err := config.LoadDefaultConfig(context.TODO())
+	awsCfg, err := awsConfig.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		panic(fmt.Sprintf("failed to load AWS config: %v", err))
 	}
@@ -69,7 +63,7 @@ func (publisher *SqsPublisher) Send(message proto.Message) error {
 	archiveOut, err := publisher.sqsClient.SendMessage(context.TODO(), &sqs.SendMessageInput{
 		QueueUrl:    aws.String(publisher.archiveQueue),
 		MessageBody: aws.String(messageString),
-		MessageAttributes: map[string]sqs.MessageAttributeValue{
+		MessageAttributes: map[string]types.MessageAttributeValue{
 			ORIGIN_QUEUE: {
 				DataType:    aws.String("String"),
 				StringValue: aws.String(publisher.queueURL),
