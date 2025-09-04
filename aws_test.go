@@ -20,7 +20,7 @@ func (suite *AwsTestSuite) TestAwsConfig() {
 
 	awsConfig1 := newAWSConfig(nil)
 	suite.NotNil(awsConfig1)
-	suite.Nil(awsConfig1.Region)
+	suite.Equal("", awsConfig1.Region)
 
 	conf := loadConfigForTest(config.AsStringPtr("fixtures/aws.testconfig.yml"))
 	awsConfig2 := newAWSConfig(conf)
